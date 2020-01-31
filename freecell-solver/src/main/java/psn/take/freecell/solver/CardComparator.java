@@ -5,10 +5,17 @@
  */
 package psn.take.freecell.solver;
 
+import java.util.Comparator;
+
 /**
  *
  * @author pairach.g
  */
-public enum CardTypes {
-    C, S, H, D
+public class CardComparator implements Comparator<Card>{
+
+    @Override
+    public int compare(Card t, Card t1) {
+        return t.val() - t1.val();
+    }
+    
 }

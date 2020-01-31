@@ -14,24 +14,24 @@ import java.util.List;
  */
 public class GameBoard {
 
-    private Cards freeCell1;
-    private Cards freeCell2;
-    private Cards freeCell3;
-    private Cards freeCell4;
-    private List<Cards> foundation1;
-    private List<Cards> foundation2;
-    private List<Cards> foundation3;
-    private List<Cards> foundation4;
-    private List<Cards> column1;
-    private List<Cards> column2;
-    private List<Cards> column3;
-    private List<Cards> column4;
-    private List<Cards> column5;
-    private List<Cards> column6;
-    private List<Cards> column7;
-    private List<Cards> column8;
+    private Card freeCell1;
+    private Card freeCell2;
+    private Card freeCell3;
+    private Card freeCell4;
+    private List<Card> foundation1;
+    private List<Card> foundation2;
+    private List<Card> foundation3;
+    private List<Card> foundation4;
+    private List<Card> column1;
+    private List<Card> column2;
+    private List<Card> column3;
+    private List<Card> column4;
+    private List<Card> column5;
+    private List<Card> column6;
+    private List<Card> column7;
+    private List<Card> column8;
 
-    private CardsComparator cardsComparator;
+    private CardComparator cardsComparator;
     
     public GameBoard() {
         foundation1 = new ArrayList();
@@ -48,10 +48,10 @@ public class GameBoard {
         column7 = new ArrayList();
         column8 = new ArrayList();
         
-        cardsComparator = new CardsComparator();
+        cardsComparator = new CardComparator();
     }
 
-    public void addCard(Columns col, Cards card){
+    public void addCard(Columns col, Card card){
         switch (col) {
             case _1:
                 column1.add(card);
@@ -98,14 +98,14 @@ public class GameBoard {
             return false;
         }
         
-        List<Cards> cCards = new ArrayList();
-        List<Cards> dCards = new ArrayList();
-        List<Cards> sCards = new ArrayList();
-        List<Cards> hCards = new ArrayList();
-        collectCard(CardTypes.C, cardsFromAllColumns(), cCards);
-        collectCard(CardTypes.D, cardsFromAllColumns(), dCards);
-        collectCard(CardTypes.S, cardsFromAllColumns(), sCards);
-        collectCard(CardTypes.H, cardsFromAllColumns(), hCards);
+        List<Card> cCards = new ArrayList();
+        List<Card> dCards = new ArrayList();
+        List<Card> sCards = new ArrayList();
+        List<Card> hCards = new ArrayList();
+        collectCard(CardType.C, cardsFromAllColumns(), cCards);
+        collectCard(CardType.D, cardsFromAllColumns(), dCards);
+        collectCard(CardType.S, cardsFromAllColumns(), sCards);
+        collectCard(CardType.H, cardsFromAllColumns(), hCards);
         if(cCards.size() != 13
                 || dCards.size() != 13
                 || sCards.size() != 13
@@ -116,7 +116,7 @@ public class GameBoard {
             sCards.sort(cardsComparator);
             hCards.sort(cardsComparator);
             System.out.print("c:" + cCards.size());
-            for(Cards c : cCards){
+            for(Card c : cCards){
                 if(cCards.indexOf(c) > 0){
                     System.out.print(",");
                 }
@@ -143,7 +143,7 @@ public class GameBoard {
         return true;
     }
     
-    public boolean checkSequence(List<Cards> cards){
+    public boolean checkSequence(List<Card> cards){
         for(int i=0;i<13;i++){
             if( cards.get(i).val() != i + 1 ){
                 return false;
@@ -152,8 +152,8 @@ public class GameBoard {
         return true;
     }
     
-    public List<Cards> cardsFromAllColumns(){
-        List<Cards> ret = new ArrayList();
+    public List<Card> cardsFromAllColumns(){
+        List<Card> ret = new ArrayList();
         ret.addAll(column1);
         ret.addAll(column2);
         ret.addAll(column3);
@@ -165,8 +165,8 @@ public class GameBoard {
         return ret;
     }
     
-    private void collectCard(CardTypes need, List<Cards> src, List<Cards> dest){
-        for(Cards card : src){
+    private void collectCard(CardType need, List<Card> src, List<Card> dest){
+        for(Card card : src){
             if(card.type().equals(need)){
                 dest.add(card);
             }
@@ -183,4 +183,6 @@ public class GameBoard {
         System.out.println("column7:" + column7.get(column7.size() - 1));
         System.out.println("column8:" + column8.get(column8.size() - 1));
     }
+    
+    
 }
