@@ -107,9 +107,25 @@ public class GameBoard {
         collectCard(CardTypes.S, cardsFromAllColumns(), sCards);
         collectCard(CardTypes.H, cardsFromAllColumns(), hCards);
         if(cCards.size() != 13
-                && dCards.size() != 13
-                && sCards.size() != 13
-                && hCards.size() != 13){
+                || dCards.size() != 13
+                || sCards.size() != 13
+                || hCards.size() != 13){
+            System.out.println("cards size not valid");
+            cCards.sort(cardsComparator);
+            dCards.sort(cardsComparator);
+            sCards.sort(cardsComparator);
+            hCards.sort(cardsComparator);
+            System.out.print("c:" + cCards.size());
+            for(Cards c : cCards){
+                if(cCards.indexOf(c) > 0){
+                    System.out.print(",");
+                }
+                System.out.print(c.toString());
+            }
+            System.out.println();
+            System.out.print("d:" + dCards.size());
+            System.out.print("s:" + sCards.size());
+            System.out.print("h:" + hCards.size());
             return false;
         }
         
@@ -118,9 +134,9 @@ public class GameBoard {
         sCards.sort(cardsComparator);
         hCards.sort(cardsComparator);
         if(!checkSequence(cCards)
-                && !checkSequence(dCards)
-                && !checkSequence(sCards)
-                && !checkSequence(hCards)){
+                || !checkSequence(dCards)
+                || !checkSequence(sCards)
+                || !checkSequence(hCards)){
             return false;
         }
         
@@ -155,5 +171,16 @@ public class GameBoard {
                 dest.add(card);
             }
         }
+    }
+    
+    public void showLastCardOfEachColumns(){
+        System.out.println("column1:" + column1.get(column1.size() - 1));
+        System.out.println("column2:" + column2.get(column2.size() - 1));
+        System.out.println("column3:" + column3.get(column3.size() - 1));
+        System.out.println("column4:" + column4.get(column4.size() - 1));
+        System.out.println("column5:" + column5.get(column5.size() - 1));
+        System.out.println("column6:" + column6.get(column6.size() - 1));
+        System.out.println("column7:" + column7.get(column7.size() - 1));
+        System.out.println("column8:" + column8.get(column8.size() - 1));
     }
 }

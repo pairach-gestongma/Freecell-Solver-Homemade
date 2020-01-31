@@ -52,36 +52,36 @@ public class Main {
         board.addCard(Columns._3, Cards._5C);
         board.addCard(Columns._3, Cards._7S);
         board.addCard(Columns._3, Cards._2H);
-        board.addCard(Columns._3, Cards._QC);
+        board.addCard(Columns._3, Cards._QS);
         
-        board.addCard(Columns._4, Cards._9C);
-        board.addCard(Columns._4, Cards._4S);
+        board.addCard(Columns._4, Cards._9S);
+        board.addCard(Columns._4, Cards._4D);
         board.addCard(Columns._4, Cards._TH);
-        board.addCard(Columns._4, Cards._6C);
-        board.addCard(Columns._4, Cards._8S);
-        board.addCard(Columns._4, Cards._KS);
+        board.addCard(Columns._4, Cards._6S);
+        board.addCard(Columns._4, Cards._8D);
+        board.addCard(Columns._4, Cards._KD);
         board.addCard(Columns._4, Cards._2C);
         
         board.addCard(Columns._5, Cards._KH);
-        board.addCard(Columns._5, Cards._2S);
-        board.addCard(Columns._5, Cards._7S);
+        board.addCard(Columns._5, Cards._2D);
+        board.addCard(Columns._5, Cards._7D);
         board.addCard(Columns._5, Cards._3S);
         board.addCard(Columns._5, Cards._TC);
         board.addCard(Columns._5, Cards._JC);
         
         board.addCard(Columns._6, Cards._KS);
-        board.addCard(Columns._6, Cards._3S);
+        board.addCard(Columns._6, Cards._3D);
         board.addCard(Columns._6, Cards._AC);
         board.addCard(Columns._6, Cards._QH);
         board.addCard(Columns._6, Cards._8S);
         board.addCard(Columns._6, Cards._AS);
         
-        board.addCard(Columns._7, Cards._6S);
-        board.addCard(Columns._7, Cards._TS);
-        board.addCard(Columns._7, Cards._9S);
+        board.addCard(Columns._7, Cards._6D);
+        board.addCard(Columns._7, Cards._TD);
+        board.addCard(Columns._7, Cards._9D);
         board.addCard(Columns._7, Cards._4C);
         board.addCard(Columns._7, Cards._8H);
-        board.addCard(Columns._7, Cards._QS);
+        board.addCard(Columns._7, Cards._QD);
         
         board.addCard(Columns._8, Cards._2S);
         board.addCard(Columns._8, Cards._7H);
@@ -94,5 +94,6 @@ public class Main {
          * end Game #142744 free-cell by Mobility ware
          */
         System.out.println("board.isBoardValid():" + board.isBoardValid());
+        board.showLastCardOfEachColumns();
     }
 }
