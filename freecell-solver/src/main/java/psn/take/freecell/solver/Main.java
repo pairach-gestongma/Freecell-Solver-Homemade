@@ -95,5 +95,6 @@ public class Main {
          */
         System.out.println("board.isBoardValid():" + board.isBoardValid());
         board.showLastCardOfEachColumns();
+        new Foundation(CardType.C);
     }
 }
