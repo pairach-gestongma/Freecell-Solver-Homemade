@@ -69,6 +69,14 @@ public class GameBoard {
         
         cardsComparator = new CardComparator();
     }
+    
+    public void intialPrevNextAllCards(){
+        for(List<Card> col :allColumns){
+            for(Card card : col){
+                card.initialPrevNext();
+            }
+        }
+    }
 
     public void addCard(Columns col, Card card){
         switch (col) {
@@ -205,18 +213,20 @@ public class GameBoard {
             maxCardByEachColumns = Math.max(maxCardByEachColumns, col.size());
         }
         
+        StringBuilder sb = new StringBuilder();
         for(int i=0;i<maxCardByEachColumns;i++){
             for(List<Card> col : allColumns){
                 try{
-                    System.out.print(col.get(i));
-                    System.out.print(" ");
+                    sb.append(col.get(i));
+                    sb.append(" ");
                 }catch(IndexOutOfBoundsException ex){
-                    System.out.print("  ");
-                    System.out.print(" ");
+                    sb.append("   ");
+                    sb.append(" ");
                 }
             }
-            System.out.println();
+            sb.append("\n");
         }
+        System.out.print(sb.toString());
     }
     
     private List<Card> getLastCardFromEachColumns(){
@@ -238,8 +248,23 @@ public class GameBoard {
         System.out.println(lineSp);
         List<Card> lastCardFromEachColumns = getLastCardFromEachColumns();
         for(Card card : lastCardFromEachColumns){
-            System.out.println("column" + (lastCardFromEachColumns.indexOf(card) 
+            System.out.print("column" + (lastCardFromEachColumns.indexOf(card) 
                     + 1) + ":" + card);
+            System.out.print(" ");
+            for(Card prevCard : card.getPossibleCardsPrevInColumn()){
+                if(card.getPossibleCardsPrevInColumn().indexOf(prevCard) > 0){
+                    System.out.print(",");
+                }
+                System.out.print(prevCard);
+            }
+            System.out.print(" ");
+            for(Card prevCard : card.getPossibleCardsNextInColumn()){
+                if(card.getPossibleCardsPrevInColumn().indexOf(prevCard) > 0){
+                    System.out.print(",");
+                }
+                System.out.print(prevCard);
+            }
+            System.out.println();
         }
     }
     
