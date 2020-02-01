@@ -21,30 +21,32 @@ public class Foundation {
         this.cardType = cardType;
         cards = new Stack();
         expectCards = new ArrayList();
-        if(cardType.equals(CardType.C)){
-            for(int i=0;i<13;i++){
-                if(i+1 == 1){
-                    expectCards.add(Card.valueOf("_AC"));
-                    continue;
-                }else if(i+1 == 10){
-                    expectCards.add(Card.valueOf("_TC"));
-                    continue;
-                }else if(i+1 == 11){
-                    expectCards.add(Card.valueOf("_JC"));
-                    continue;
-                }else if(i+1 == 12){
-                    expectCards.add(Card.valueOf("_QC"));
-                    continue;
-                }else if(i+1 == 13){
-                    expectCards.add(Card.valueOf("_KC"));
-                    continue;
-                }
-                expectCards.add(Card.valueOf("_" + (i+1) + "C"));
+        for(int i=0;i<13;i++){
+            if(i+1 == 1){
+                expectCards.add(Card.valueOf("_A" + cardType.name()));
+                continue;
+            }else if(i+1 == 10){
+                expectCards.add(Card.valueOf("_T" + cardType.name()));
+                continue;
+            }else if(i+1 == 11){
+                expectCards.add(Card.valueOf("_J" + cardType.name()));
+                continue;
+            }else if(i+1 == 12){
+                expectCards.add(Card.valueOf("_Q" + cardType.name()));
+                continue;
+            }else if(i+1 == 13){
+                expectCards.add(Card.valueOf("_K" + cardType.name()));
+                continue;
             }
+            expectCards.add(Card.valueOf("_" + (i+1) + cardType.name()));
         }
-        for(Card c : expectCards){
-            System.out.println(c.name());
-        }
+//        for(Card c : expectCards){
+//            System.out.println(c.name());
+//        }
+    }
+    
+    public Card nextNeedCard(){
+        return expectCards.get(cards.size());
     }
     
 }

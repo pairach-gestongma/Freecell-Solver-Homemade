@@ -94,7 +94,9 @@ public class Main {
          * end Game #142744 free-cell by Mobility ware
          */
         System.out.println("board.isBoardValid():" + board.isBoardValid());
+        board.showBoard();
         board.showLastCardOfEachColumns();
-        new Foundation(CardType.C);
+        board.showCardsPossibleToMoveToFoundation();
+        
     }
 }
