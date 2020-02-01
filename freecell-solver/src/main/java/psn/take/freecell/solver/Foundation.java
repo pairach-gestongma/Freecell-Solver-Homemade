@@ -58,4 +58,7 @@ public class Foundation {
         srcColumn.getCards().remove(card);
     }
     
+    public Card currentCard(){
+        return cards.lastElement();
+    }
 }
