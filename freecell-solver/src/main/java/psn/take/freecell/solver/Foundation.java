@@ -49,4 +49,13 @@ public class Foundation {
         return expectCards.get(cards.size());
     }
     
+    public CardType cardType(){
+        return cardType;
+    }
+    
+    public void addCard(Card card, ColumnCard srcColumn){
+        cards.add(card);
+        srcColumn.getCards().remove(card);
+    }
+    
 }

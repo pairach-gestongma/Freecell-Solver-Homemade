@@ -7,6 +7,7 @@ package psn.take.freecell.solver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  *
@@ -14,25 +15,22 @@ import java.util.List;
  */
 public class GameBoard {
 
-    private Card freeCell1;
-    private Card freeCell2;
-    private Card freeCell3;
-    private Card freeCell4;
     private Foundation foundationC;
     private Foundation foundationD;
     private Foundation foundationH;
     private Foundation foundationS;
-    private List<Card> column1;
-    private List<Card> column2;
-    private List<Card> column3;
-    private List<Card> column4;
-    private List<Card> column5;
-    private List<Card> column6;
-    private List<Card> column7;
-    private List<Card> column8;
+    private ColumnCard column1;
+    private ColumnCard column2;
+    private ColumnCard column3;
+    private ColumnCard column4;
+    private ColumnCard column5;
+    private ColumnCard column6;
+    private ColumnCard column7;
+    private ColumnCard column8;
     
-    List<List<Card>> allColumns;
+    List<ColumnCard> allColumns;
     List<Foundation> allFoundations;
+    List<Card> allFreeCells;
 
     private CardComparator cardsComparator;
     
@@ -42,14 +40,14 @@ public class GameBoard {
         foundationH = new Foundation(CardType.H);
         foundationS = new Foundation(CardType.S);
 
-        column1 = new ArrayList();
-        column2 = new ArrayList();
-        column3 = new ArrayList();
-        column4 = new ArrayList();
-        column5 = new ArrayList();
-        column6 = new ArrayList();
-        column7 = new ArrayList();
-        column8 = new ArrayList();
+        column1 = new ColumnCard(ColumnNo._1);
+        column2 = new ColumnCard(ColumnNo._2);
+        column3 = new ColumnCard(ColumnNo._3);
+        column4 = new ColumnCard(ColumnNo._4);
+        column5 = new ColumnCard(ColumnNo._5);
+        column6 = new ColumnCard(ColumnNo._6);
+        column7 = new ColumnCard(ColumnNo._7);
+        column8 = new ColumnCard(ColumnNo._8);
         
         allColumns = new ArrayList();
         allColumns.add(column1);
@@ -67,46 +65,50 @@ public class GameBoard {
         allFoundations.add(foundationH);
         allFoundations.add(foundationS);
         
+        allFreeCells = new ArrayList();
+        
         cardsComparator = new CardComparator();
     }
     
-    public void intialPrevNextAllCards(){
-        for(List<Card> col :allColumns){
-            for(Card card : col){
-                card.initialPrevNext();
+    public GameBoard(StringBuilder spec){
+        this();
+        String[] lines = spec.toString().split("\n");
+        for(int i=0;i<8;i++){
+            for(String line : lines){
+                String cardName = line.substring(i*4, i*4 + 3);
+//                System.out.println("cardName:" + cardName);
+                if(cardName.trim().length() == 0){
+                    continue;
+                }
+                allColumns.get(i).getCards().add(
+                        Card.valueOf(cardName));
             }
         }
     }
-
-    public void addCard(Columns col, Card card){
-        switch (col) {
-            case _1:
-                column1.add(card);
-                break;
-            case _2:
-                column2.add(card);
-                break;
-            case _3:
-                column3.add(card);
-                break;
-            case _4:
-                column4.add(card);
-                break;
-            case _5:
-                column5.add(card);
-                break;
-            case _6:
-                column6.add(card);
-                break;
-            case _7:
-                column7.add(card);
-                break;
-            case _8:
-                column8.add(card);
-                break;
-            default:
-                break;
+    
+    public boolean isFullFreeCell(){
+        return allFreeCells.size() == 4;
+    }
+    
+    public void addCardToFreeCell(Card card) {
+        if(isFullFreeCell()){
+            throw new RuntimeException("can not add card, freecell already full!");
         }
+        allFreeCells.add(card);
+    }
+    
+    public void intialPrevNextAllCards(){
+        allColumns.forEach((ColumnCard col) -> {
+            col.getCards().forEach((card) -> card.initialPrevNext());
+        });
+    }
+
+    public void addCard(ColumnNo col, Card card){
+        allColumns.forEach((ColumnCard col1) -> {
+            if(col1.getColumn().equals(col)){
+                col1.getCards().add(card);
+            }
+        });
     }
     
 /**
@@ -118,10 +120,10 @@ public class GameBoard {
  * @author pairach.g
  */
     public boolean isBoardValid(){
-        if((column1.size() + column2.size()
-                + column3.size() + column4.size()
-                + column5.size() + column6.size()
-                + column7.size() + column8.size()) != 13*4){
+        if((column1.getCards().size() + column2.getCards().size()
+                + column3.getCards().size() + column4.getCards().size()
+                + column5.getCards().size() + column6.getCards().size()
+                + column7.getCards().size() + column8.getCards().size()) != 13*4){
             return false;
         }
         
@@ -181,14 +183,14 @@ public class GameBoard {
     
     public List<Card> cardsFromAllColumns(){
         List<Card> ret = new ArrayList();
-        ret.addAll(column1);
-        ret.addAll(column2);
-        ret.addAll(column3);
-        ret.addAll(column4);
-        ret.addAll(column5);
-        ret.addAll(column6);
-        ret.addAll(column7);
-        ret.addAll(column8);
+        ret.addAll(column1.getCards());
+        ret.addAll(column2.getCards());
+        ret.addAll(column3.getCards());
+        ret.addAll(column4.getCards());
+        ret.addAll(column5.getCards());
+        ret.addAll(column6.getCards());
+        ret.addAll(column7.getCards());
+        ret.addAll(column8.getCards());
         return ret;
     }
     
@@ -203,21 +205,21 @@ public class GameBoard {
     public static final String lineSp = "---------------------------------------"
             + "---------------------------------";
     
-    public void showBoard(){
-        System.out.println(lineSp);
-        System.out.println("showBoard");
-        System.out.println(lineSp);
+    public String getBoardState(){
+//        System.out.println(lineSp);
+//        System.out.println("showBoard");
+//        System.out.println(lineSp);
 
         int maxCardByEachColumns = 0;
-        for(List<Card> col : allColumns){
-            maxCardByEachColumns = Math.max(maxCardByEachColumns, col.size());
+        for(ColumnCard col : allColumns){
+            maxCardByEachColumns = Math.max(maxCardByEachColumns, col.getCards().size());
         }
         
         StringBuilder sb = new StringBuilder();
         for(int i=0;i<maxCardByEachColumns;i++){
-            for(List<Card> col : allColumns){
+            for(ColumnCard col : allColumns){
                 try{
-                    sb.append(col.get(i));
+                    sb.append(col.getCards().get(i));
                     sb.append(" ");
                 }catch(IndexOutOfBoundsException ex){
                     sb.append("   ");
@@ -226,19 +228,19 @@ public class GameBoard {
             }
             sb.append("\n");
         }
-        System.out.print(sb.toString());
+        return sb.toString();
     }
     
-    private List<Card> getLastCardFromEachColumns(){
-        List<Card> lastCards = new ArrayList();
-        lastCards.add(column1.get(column1.size() - 1));
-        lastCards.add(column2.get(column2.size() - 1));
-        lastCards.add(column3.get(column3.size() - 1));
-        lastCards.add(column4.get(column4.size() - 1));
-        lastCards.add(column5.get(column5.size() - 1));
-        lastCards.add(column6.get(column6.size() - 1));
-        lastCards.add(column7.get(column7.size() - 1));
-        lastCards.add(column8.get(column8.size() - 1));
+    private List<ColumnAndCard> getLastCardFromEachColumns(){
+        List<ColumnAndCard> lastCards = new ArrayList();
+        lastCards.add(new ColumnAndCard(column1, column1.getCards().get(column1.getCards().size() - 1)));
+        lastCards.add(new ColumnAndCard(column2, column2.getCards().get(column2.getCards().size() - 1)));
+        lastCards.add(new ColumnAndCard(column3, column3.getCards().get(column3.getCards().size() - 1)));
+        lastCards.add(new ColumnAndCard(column4, column4.getCards().get(column4.getCards().size() - 1)));
+        lastCards.add(new ColumnAndCard(column5, column5.getCards().get(column5.getCards().size() - 1)));
+        lastCards.add(new ColumnAndCard(column6, column6.getCards().get(column6.getCards().size() - 1)));
+        lastCards.add(new ColumnAndCard(column7, column7.getCards().get(column7.getCards().size() - 1)));
+        lastCards.add(new ColumnAndCard(column8, column8.getCards().get(column8.getCards().size() - 1)));
         return lastCards;
     }
     
@@ -246,20 +248,20 @@ public class GameBoard {
         System.out.println(lineSp);
         System.out.println("showLastCardOfEachColumns");
         System.out.println(lineSp);
-        List<Card> lastCardFromEachColumns = getLastCardFromEachColumns();
-        for(Card card : lastCardFromEachColumns){
-            System.out.print("column" + (lastCardFromEachColumns.indexOf(card) 
-                    + 1) + ":" + card);
+        List<ColumnAndCard> lastCardFromEachColumns = getLastCardFromEachColumns();
+        for(ColumnAndCard colAndCard : lastCardFromEachColumns){
+            System.out.print("column" + (lastCardFromEachColumns.indexOf(colAndCard) 
+                    + 1) + ":" + colAndCard);
             System.out.print(" ");
-            for(Card prevCard : card.getPossibleCardsPrevInColumn()){
-                if(card.getPossibleCardsPrevInColumn().indexOf(prevCard) > 0){
+            for(Card prevCard : colAndCard.getCard().getPossibleCardsPrevInColumn()){
+                if(colAndCard.getCard().getPossibleCardsPrevInColumn().indexOf(prevCard) > 0){
                     System.out.print(",");
                 }
                 System.out.print(prevCard);
             }
             System.out.print(" ");
-            for(Card prevCard : card.getPossibleCardsNextInColumn()){
-                if(card.getPossibleCardsPrevInColumn().indexOf(prevCard) > 0){
+            for(Card prevCard : colAndCard.getCard().getPossibleCardsNextInColumn()){
+                if(colAndCard.getCard().getPossibleCardsPrevInColumn().indexOf(prevCard) > 0){
                     System.out.print(",");
                 }
                 System.out.print(prevCard);
@@ -272,23 +274,38 @@ public class GameBoard {
         System.out.println(lineSp);
         System.out.println("showCardsPossibleToMoveToFoundation");
         System.out.println(lineSp);
-        List<Card> lastCardFromEachColumns = getCardsPossibleToMoveToFoundation();
-        for(Card card : lastCardFromEachColumns){
-            System.out.println("column" + (lastCardFromEachColumns.indexOf(card) 
-                    + 1) + ":" + card);
+        List<ColumnAndCard> lastCardFromEachColumns = getCardsPossibleToMoveToFoundation();
+        for(ColumnAndCard colAndCard : lastCardFromEachColumns){
+            System.out.println("column" + (lastCardFromEachColumns.indexOf(colAndCard) 
+                    + 1) + ":" + colAndCard.getCard());
         }
     }
     
-    private List<Card> getCardsPossibleToMoveToFoundation(){
-        List<Card> possibleCards = new ArrayList();
-        List<Card> lastCardFromEachColumns = getLastCardFromEachColumns();
+    private List<ColumnAndCard> getCardsPossibleToMoveToFoundation(){
+        List<ColumnAndCard> possibleCards = new ArrayList();
+        List<ColumnAndCard> lastCardFromEachColumns = getLastCardFromEachColumns();
         for(Foundation fdtn : allFoundations){
-            for(Card card : lastCardFromEachColumns){
-                if(fdtn.nextNeedCard().equals(card)){
-                    possibleCards.add(card);
+            for(ColumnAndCard colAndCard : lastCardFromEachColumns){
+                if(fdtn.nextNeedCard().equals(colAndCard.getCard())){
+                    possibleCards.add(colAndCard);
                 }
             }
         }
         return possibleCards;
+    }
+    
+    public List<String> nextPlay(){
+        List<String> res = new ArrayList();
+        List<ColumnAndCard> cards = getCardsPossibleToMoveToFoundation();
+        A:
+        for(ColumnAndCard colAndCard : cards){
+            for(Foundation fd : allFoundations){
+                if(fd.cardType().equals(colAndCard.getCard().type())){
+                    fd.addCard(colAndCard.getCard(), colAndCard.getColumn());
+                    continue A;
+                }
+            }
+        }
+        return res;
     }
 }

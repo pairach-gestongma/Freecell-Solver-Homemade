@@ -9,6 +9,6 @@ package psn.take.freecell.solver;
  *
  * @author pairach.g
  */
-public enum Columns {
+public enum ColumnNo {
     _1,_2,_3,_4,_5,_6,_7,_8
 }

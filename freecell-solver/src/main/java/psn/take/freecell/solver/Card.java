@@ -28,6 +28,7 @@ public  enum Card {
     private CardType type;
     private List<Card> possibleCardsPrevInColumn;
     private List<Card> possibleCardsNextInColumn;
+    
     Card(int val, CardType type){
         this.val = val;
         this.type = type;
