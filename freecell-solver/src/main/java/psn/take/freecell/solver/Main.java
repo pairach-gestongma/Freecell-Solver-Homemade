@@ -61,5 +61,8 @@ sb.append("_9H _JH _QS _2C                 \n");
             newBoard.printBoardState();
         }
         // \. freecell
+        // column to column
+        
+        // \. column to column
     }
 }
