@@ -28,13 +28,26 @@ public class GameBoard {
     private ColumnCard column7;
     private ColumnCard column8;
     
-    List<ColumnCard> allColumns;
-    List<Foundation> allFoundations;
-    List<Card> allFreeCells;
+    private List<ColumnCard> allColumns;
+    private List<Foundation> allFoundations;
+    private List<Card> allFreeCells;
 
     private CardComparator cardsComparator;
     
-    public GameBoard() {
+    private final GameBoard parent;
+    private final int depth;
+    private boolean isOver;
+    private String name;
+    private int boardId;
+
+    private GameBoard(int boardId, String name, GameBoard parent,int depth) {
+//        System.out.println("name:" + name);
+        this.boardId = boardId;
+        this.name = name;
+        this.parent = parent;
+        this.depth = depth;
+        isOver = false;
+        
         foundationC = new Foundation(CardType.C);
         foundationD = new Foundation(CardType.D);
         foundationH = new Foundation(CardType.H);
@@ -70,11 +83,38 @@ public class GameBoard {
         cardsComparator = new CardComparator();
     }
     
-    public GameBoard(String spec){
-        this();
+    public GameBoard(int boardId, String spec, String name, GameBoard parent,int depth){
+        this(boardId, name, parent, depth);
+//        System.out.println("spec:");
+//        System.out.println(spec);
         String[] lines = spec.split("\n");
         for(int i=0;i<8;i++){
+            
+            int lineNo = 0;
+            
+            B:
             for(String line : lines){
+//                System.out.println(lineNo+":" + line);
+                if(0 == lineNo++){
+                    String cardName = line.substring(i*4, i*4 + 3);
+    //                System.out.println("cardName:" + cardName);
+                    if(cardName.trim().length() == 0){
+                        
+                    }else{
+                        if(i<=3){
+                            allFreeCells.add(
+                                Card.valueOf(cardName));
+                        }else{
+                            Card c = Card.valueOf(cardName);
+                            for(Foundation f : allFoundations){
+                                if(f.cardType().equals(c.type())){
+                                    f.initWithCard(c);
+                                }
+                            }
+                        }
+                    }
+                    continue B;
+                }
                 String cardName = line.substring(i*4, i*4 + 3);
 //                System.out.println("cardName:" + cardName);
                 if(cardName.trim().length() == 0){
@@ -82,12 +122,24 @@ public class GameBoard {
                 }
                 allColumns.get(i).getCards().add(
                         Card.valueOf(cardName));
-            }
+            }// \. for(String line : lines){
         }
+    }
+    
+    public GameBoard getParent() {
+        return parent;
+    }
+
+    public int getDepth() {
+        return depth;
     }
     
     public boolean isFullFreeCell(){
         return allFreeCells.size() == 4;
+    }
+
+    public List<Foundation> getAllFoundations() {
+        return allFoundations;
     }
     
     public void addCardToFreeCell(Card card, ColumnNo fromCol) {
@@ -96,6 +148,13 @@ public class GameBoard {
         }
         allFreeCells.add(card);
         getColumn(fromCol).getCards().remove(card);
+    }
+    
+    public void moveCard(ColumnAndCard colAndCard){
+        ColumnCard toCol = getColumn(colAndCard.getMoveToCol().getColumn());
+        toCol.getCards().add(colAndCard.getCard());
+        ColumnCard srcCol = getColumn(colAndCard.getColumn().getColumn());
+        srcCol.getCards().remove(colAndCard.getCard());
     }
     
     public void intialPrevNextAllCards(){
@@ -229,9 +288,50 @@ public class GameBoard {
         return sb.toString();
     }
     
+    public String getBoardStateFreecellAndFoundation(){
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<4;i++){
+            try{
+                sb.append(allFreeCells.get(i) + " ");
+            }catch(IndexOutOfBoundsException ex){
+                sb.append("   " + " ");
+            }
+        }
+        for(int i=0;i<4;i++){
+            try{
+                sb.append(allFoundations.get(i).currentCard() + " ");
+            }catch(IndexOutOfBoundsException ex){
+                sb.append("   " + " ");
+            }catch(NoSuchElementException ex){
+                sb.append("   " + " ");
+            }
+        }
+        sb.append("\n");
+        
+        int maxCardByEachColumns = 0;
+        for(ColumnCard col : allColumns){
+            maxCardByEachColumns = Math.max(maxCardByEachColumns, col.getCards().size());
+        }
+        
+        for(int i=0;i<maxCardByEachColumns;i++){
+            for(ColumnCard col : allColumns){
+                try{
+                    sb.append(col.getCards().get(i));
+                    sb.append(" ");
+                }catch(IndexOutOfBoundsException ex){
+                    sb.append("   ");
+                    sb.append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+    
     public void printBoardState() {
         System.out.println(lineSp);
-        System.out.println("showBoard");
+        System.out.println("showBoard : "+boardId+"(" + name
+                + ","+((parent!=null)?parent.boardId:"")+"), depth:" + depth);
         System.out.println(lineSp);
         for(int i=0;i<4;i++){
             try{
@@ -329,6 +429,26 @@ public class GameBoard {
         return possibleCards;
     }
     
+    public List<ColumnAndCard> getCardsPossibleToMoveFromColumnToColumn(){
+        List<ColumnAndCard> res = new ArrayList();
+        List<ColumnAndCard> lastCardFromEachColumns = getLastCardFromEachColumns();
+        for(ColumnAndCard colCard1 : lastCardFromEachColumns){
+            B:
+            for(ColumnAndCard colCard2 : lastCardFromEachColumns){
+                if(colCard1.equals(colCard2)){
+                    continue B;
+                }
+                if(colCard1.getCard().getPossibleCardsNextInColumn()
+                        .contains(colCard2.getCard())){
+                    ColumnAndCard re = new ColumnAndCard(colCard2.getColumn(), colCard2.getCard()
+                            , colCard1.getColumn(), colCard1.getCard());
+                    res.add(re);
+                }
+            }
+        }
+        return res;
+    }
+    
     public ColumnCard getColumn(ColumnNo no){
         for(ColumnCard col : allColumns){
             if(col.getColumn().equals(no)){
@@ -338,23 +458,23 @@ public class GameBoard {
         return null;
     }
     
-    public List<GameBoard> nextPlay(){
-        List<GameBoard> res = new ArrayList();
-        GameBoard gb = new GameBoard(getBoardState().toString());
-        // posible to foundation
-        List<ColumnAndCard> cards = gb.getCardsPossibleToMoveToFoundation();
-        A:
-        for(ColumnAndCard colAndCard : cards){
-            B:
-            for(Foundation fd : gb.allFoundations){
-                if(fd.cardType().equals(colAndCard.getCard().type())){
-                    fd.addCard(colAndCard.getCard(), colAndCard.getColumn());
-                    break B;
-                }
-            }
-            res.add(new GameBoard(gb.getBoardState()));
-        }
-        // \. posible to foundation
-        return res;
-    }
+//    public List<GameBoard> nextPlay(){
+//        List<GameBoard> res = new ArrayList();
+//        GameBoard gb = new GameBoard(getBoardState().toString());
+//        // posible to foundation
+//        List<ColumnAndCard> cards = gb.getCardsPossibleToMoveToFoundation();
+//        A:
+//        for(ColumnAndCard colAndCard : cards){
+//            B:
+//            for(Foundation fd : gb.allFoundations){
+//                if(fd.cardType().equals(colAndCard.getCard().type())){
+//                    fd.addCard(colAndCard.getCard(), colAndCard.getColumn());
+//                    break B;
+//                }
+//            }
+//            res.add(new GameBoard(gb.getBoardState()));
+//        }
+//        // \. posible to foundation
+//        return res;
+//    }
 }

@@ -45,6 +45,29 @@ public class Foundation {
 //        }
     }
     
+    public void initWithCard(Card card){
+        cards.clear();
+        for(int i=0;i<=card.val();i++){
+            if(i+1 == 1){
+                cards.add(Card.valueOf("_A" + cardType.name()));
+                continue;
+            }else if(i+1 == 10){
+                cards.add(Card.valueOf("_T" + cardType.name()));
+                continue;
+            }else if(i+1 == 11){
+                cards.add(Card.valueOf("_J" + cardType.name()));
+                continue;
+            }else if(i+1 == 12){
+                cards.add(Card.valueOf("_Q" + cardType.name()));
+                continue;
+            }else if(i+1 == 13){
+                cards.add(Card.valueOf("_K" + cardType.name()));
+                continue;
+            }
+            cards.add(Card.valueOf("_" + (i+1) + cardType.name()));
+        }
+    }
+    
     public Card nextNeedCard(){
         return expectCards.get(cards.size());
     }
