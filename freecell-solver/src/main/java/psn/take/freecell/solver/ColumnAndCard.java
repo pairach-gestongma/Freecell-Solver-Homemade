@@ -14,18 +14,18 @@ public class ColumnAndCard {
     private ColumnCard column;
     private Card card;
     private ColumnCard moveToCol;
-    private Card moveCard;
+    private Card moveToCard;
 
     public ColumnAndCard(ColumnCard column, Card card) {
         this.column = column;
         this.card = card;
     }
 
-    public ColumnAndCard(ColumnCard column, Card card, ColumnCard moveToCol, Card moveCard) {
+    public ColumnAndCard(ColumnCard column, Card card, ColumnCard moveToCol, Card moveToCard) {
         this.column = column;
         this.card = card;
         this.moveToCol = moveToCol;
-        this.moveCard = moveCard;
+        this.moveToCard = moveToCard;
     }
 
     public ColumnCard getColumn() {
@@ -52,12 +52,12 @@ public class ColumnAndCard {
         this.moveToCol = moveToCol;
     }
 
-    public Card getMoveCard() {
-        return moveCard;
+    public Card getMoveToCard() {
+        return moveToCard;
     }
 
-    public void setMoveCard(Card moveCard) {
-        this.moveCard = moveCard;
+    public void setMoveToCard(Card moveToCard) {
+        this.moveToCard = moveToCard;
     }
 
 }

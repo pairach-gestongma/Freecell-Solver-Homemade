@@ -20,7 +20,7 @@ public class Main {
     
     
     
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         /**
          * initial Game #142744 free-cell by Mobility ware
          */
@@ -43,9 +43,11 @@ sb.append("_9H _JH _QS _2C                 \n");
         board.printBoardState();
         //System.out.println(board.getBoardStateFreecellAndFoundation());
         
+        List<String> memory = new ArrayList();
         List<GameBoard> toPlays = new ArrayList();
         toPlays.add(board);
-        for(int i=0;i<3;i++){
+        memory.add(board.getBoardState());
+        for(int i=0;i<4;i++){
             
             List<GameBoard> toPlaysNext = new ArrayList();
             for(GameBoard playingBoard : toPlays){
@@ -62,7 +64,9 @@ sb.append("_9H _JH _QS _2C                 \n");
                         }
                     }
                     newBoard.printBoardState();
-                    toPlaysNext.add(newBoard);
+                    if(!memory.contains(newBoard.getBoardState())){
+                        toPlaysNext.add(newBoard);
+                    }
                 }
                 // \. foundation
                 // freecell
@@ -71,7 +75,9 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move to freecell", playingBoard, i+1);
                     newBoard.addCardToFreeCell(cc.getCard(), cc.getColumn().getColumn());
                     newBoard.printBoardState();
-                    toPlaysNext.add(newBoard);
+                    if(!memory.contains(newBoard.getBoardState())){
+                        toPlaysNext.add(newBoard);
+                    }
                 }
                 // \. freecell
                 // move card from column to column
@@ -80,7 +86,9 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move card from col to col", playingBoard, i+1);
                     newBoard.moveCard(cc);
                     newBoard.printBoardState();
-                    toPlaysNext.add(newBoard);
+                    if(!memory.contains(newBoard.getBoardState())){
+                        toPlaysNext.add(newBoard);
+                    }
                 }
                 // \. move card from column to column
                 // move cards from column to column
@@ -92,6 +100,21 @@ sb.append("_9H _JH _QS _2C                 \n");
             toPlays.addAll(toPlaysNext);
         }
         
+        
+    }
+    
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+sb.append(" _2C                              \n");
+sb.append(" _QC _AD _5S _9S _KH _KS _6D _2S  \n");
+sb.append(" _3H _4S _5H _4D _2D _3D _TD _7H  \n");
+sb.append(" _AH _6C _4H _TH _7D _AC _9D _9C  \n");
+sb.append(" _5D _7C _5C _6S _3S _QH _4C _JS  \n");
+sb.append(" _8C _TS _7S _8D _TC _8S _8H _KC  \n");
+sb.append(" _6H _JD _2H _KD _JC _AS _QD _3C  \n");
+sb.append(" _9H     _QS                      \n");
+sb.append("         _JH                      \n");
+        GameBoard gb = new GameBoard(0, sb.toString(), "0", null, 0);
         
     }
 }

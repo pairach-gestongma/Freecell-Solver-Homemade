@@ -47,7 +47,7 @@ public class Foundation {
     
     public void initWithCard(Card card){
         cards.clear();
-        for(int i=0;i<=card.val();i++){
+        for(int i=0;i<card.val();i++){
             if(i+1 == 1){
                 cards.add(Card.valueOf("_A" + cardType.name()));
                 continue;
