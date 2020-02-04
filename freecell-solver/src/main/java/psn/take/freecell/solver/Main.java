@@ -7,6 +7,8 @@ package psn.take.freecell.solver;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -18,7 +20,8 @@ import java.util.List;
  */
 public class Main {
     
-    
+    private static final Logger logger 
+      = LoggerFactory.getLogger(Main.class);
     
     public static void main(String[] args) {
         /**
@@ -39,7 +42,7 @@ sb.append("_9H _JH _QS _2C                 \n");
         /**
          * end initial Game #142744 free-cell by Mobility ware
          */
-        System.out.println("board.isBoardValid():" + board.isBoardValid());
+        logger.debug("board.isBoardValid():" + board.isBoardValid());
         board.printBoardState();
         //System.out.println(board.getBoardStateFreecellAndFoundation());
         
@@ -47,7 +50,7 @@ sb.append("_9H _JH _QS _2C                 \n");
         List<GameBoard> toPlays = new ArrayList();
         toPlays.add(board);
         memory.add(board.getBoardState());
-        for(int i=0;i<4;i++){
+        for(int i=0;i<100;i++){
             
             List<GameBoard> toPlaysNext = new ArrayList();
             for(GameBoard playingBoard : toPlays){

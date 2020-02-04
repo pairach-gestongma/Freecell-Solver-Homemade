@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    
+    <conversionRule conversionWord="tid" 
+    converterClass="psn.take.freecell.solver" />
+    
+    <!--<timestamp key="byDay" datePattern="yyyyMMdd'T'HHmmss"/>-->
+    <timestamp key="byDay" datePattern="yyyyMMdd"/>
+    
+    <property name="LOG_FILE" value="C:/logs/Freecell.log"/>
+    
+    <logger name="com.csp.biv" level="DEBUG" />
+    
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!--<Pattern>-->
+                <!--%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n-->
+            <!--</Pattern>-->
+            <Pattern>
+                %d{HH:mm:ss.SSS}%n%msg%n
+            </Pattern>
+        </layout>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file> C:/logs/Freecell-log-${byDay}.txt </file>
+        <append>true</append>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS}%n%msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    
+<!--    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>-->
+    <root level="DEBUG">
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

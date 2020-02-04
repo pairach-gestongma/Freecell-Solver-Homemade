@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -16,6 +18,9 @@ import java.util.NoSuchElementException;
  */
 public class GameBoard {
 
+    private static final Logger logger 
+      = LoggerFactory.getLogger(GameBoard.class);
+    
     private Foundation foundationC;
     private Foundation foundationD;
     private Foundation foundationH;
@@ -345,41 +350,45 @@ public class GameBoard {
     }
     
     public void printBoardState() {
-        System.out.println(lineSp);
-        System.out.println("showBoard : "+boardId+"(" + name
+        StringBuilder sb = new StringBuilder();
+        sb.append(lineSp);
+        sb.append("\n");
+        sb.append("showBoard : "+boardId+"(" + name
                 + ","+((parent!=null)?parent.boardId:"")+"), depth:" + depth);
-        System.out.println(lineSp);
+        sb.append("\n");
+        sb.append(lineSp).append("\n");
         for(int i=0;i<4;i++){
             try{
-                System.out.print(allFreeCells.get(i) + " ");
+                sb.append(allFreeCells.get(i) + " ");
             }catch(IndexOutOfBoundsException ex){
-                System.out.print("   " + " ");
+                sb.append("   " + " ");
             }
         }
         for(int i=0;i<4;i++){
             try{
-                System.out.print(allFoundations.get(i).currentCard() + " ");
+                sb.append(allFoundations.get(i).currentCard() + " ");
             }catch(IndexOutOfBoundsException ex){
-                System.out.print("   " + " ");
+                sb.append("   " + " ");
             }catch(NoSuchElementException ex){
-                System.out.print("   " + " ");
+                sb.append("   " + " ");
             }
         }
-        System.out.println();
-        System.out.println(lineSp.replaceAll("-", "."));
-        System.out.println(getBoardState());
+        sb.append("\n");
+        sb.append(lineSp.replaceAll("-", ".")).append("\n");
+        sb.append(getBoardState());
+        logger.debug(sb.toString());
     }
     
     private List<ColumnAndCard> getLastCardFromEachColumns(){
         List<ColumnAndCard> lastCards = new ArrayList();
-        lastCards.add(new ColumnAndCard(column1, column1.getCards().get(column1.getCards().size() - 1)));
-        lastCards.add(new ColumnAndCard(column2, column2.getCards().get(column2.getCards().size() - 1)));
-        lastCards.add(new ColumnAndCard(column3, column3.getCards().get(column3.getCards().size() - 1)));
-        lastCards.add(new ColumnAndCard(column4, column4.getCards().get(column4.getCards().size() - 1)));
-        lastCards.add(new ColumnAndCard(column5, column5.getCards().get(column5.getCards().size() - 1)));
-        lastCards.add(new ColumnAndCard(column6, column6.getCards().get(column6.getCards().size() - 1)));
-        lastCards.add(new ColumnAndCard(column7, column7.getCards().get(column7.getCards().size() - 1)));
-        lastCards.add(new ColumnAndCard(column8, column8.getCards().get(column8.getCards().size() - 1)));
+        if(!column1.getCards().isEmpty())lastCards.add(new ColumnAndCard(column1, column1.getCards().get(column1.getCards().size() - 1)));
+        if(!column2.getCards().isEmpty())lastCards.add(new ColumnAndCard(column2, column2.getCards().get(column2.getCards().size() - 1)));
+        if(!column3.getCards().isEmpty())lastCards.add(new ColumnAndCard(column3, column3.getCards().get(column3.getCards().size() - 1)));
+        if(!column4.getCards().isEmpty())lastCards.add(new ColumnAndCard(column4, column4.getCards().get(column4.getCards().size() - 1)));
+        if(!column5.getCards().isEmpty())lastCards.add(new ColumnAndCard(column5, column5.getCards().get(column5.getCards().size() - 1)));
+        if(!column6.getCards().isEmpty())lastCards.add(new ColumnAndCard(column6, column6.getCards().get(column6.getCards().size() - 1)));
+        if(!column7.getCards().isEmpty())lastCards.add(new ColumnAndCard(column7, column7.getCards().get(column7.getCards().size() - 1)));
+        if(!column8.getCards().isEmpty())lastCards.add(new ColumnAndCard(column8, column8.getCards().get(column8.getCards().size() - 1)));
         return lastCards;
     }
     
