@@ -158,6 +158,12 @@ public class GameBoard {
         srcCol.getCards().remove(colAndCard.getCard());
     }
     
+    public void moveCardFromFreecell(ColumnAndCard colAndCard){
+        ColumnCard toCol = getColumn(colAndCard.getMoveToCol().getColumn());
+        toCol.getCards().add(colAndCard.getCard());
+        allFreeCells.remove(colAndCard.getCard());
+    }
+    
     public void moveCards(ColumnAndCard colAndCard){
         ColumnCard toCol = getColumn(colAndCard.getMoveToCol().getColumn());
         ColumnCard srcCol = getColumn(colAndCard.getColumn().getColumn());
@@ -533,6 +539,45 @@ public class GameBoard {
         return res;
     }
     
+    public List<Card> getFreecellCardPossibleToMoveToFoundation(){
+        List<Card> res = new ArrayList();
+        for(Card card : allFreeCells){
+            B:
+            for(Foundation fdtn : allFoundations){
+                if(!fdtn.cardType().equals(card.type())){
+                    continue B;
+                }
+                try{
+                    if(fdtn.currentCard().val() + 1 == card.val()){
+                        res.add(card);
+                    }   
+                }catch(NoSuchElementException ex){
+                }
+                break B;
+            }
+        }
+        return res;
+    }
+    
+    public List<ColumnAndCard> getFreecellCardPossibleToMoveToColumn(){
+        List<ColumnAndCard> res = new ArrayList();
+        for(Card card : allFreeCells){
+            for(ColumnAndCard cc : getLastCardFromEachColumns()){
+                if(cc.getCard().getPossibleCardsNextInColumn()
+                        .contains(card)){
+                    ColumnAndCard re = new ColumnAndCard(null, card, 
+                            cc.getColumn(), card);
+                    res.add(re);
+                }
+            }
+        }
+        return res;
+    }
+    
+    public List<Card> getAllFreeCells() {
+        return allFreeCells;
+    }
+    
 //    public List<GameBoard> nextPlay(){
 //        List<GameBoard> res = new ArrayList();
 //        GameBoard gb = new GameBoard(getBoardState().toString());
@@ -552,4 +597,6 @@ public class GameBoard {
 //        // \. posible to foundation
 //        return res;
 //    }
+
+    
 }

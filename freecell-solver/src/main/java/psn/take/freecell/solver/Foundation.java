@@ -81,6 +81,11 @@ public class Foundation {
         srcColumn.getCards().remove(card);
     }
     
+    public void addCardFromFreecell(Card card, List<Card> freecell){
+        cards.add(card);
+        freecell.remove(card);
+    }
+    
     public Card currentCard(){
         return cards.lastElement();
     }

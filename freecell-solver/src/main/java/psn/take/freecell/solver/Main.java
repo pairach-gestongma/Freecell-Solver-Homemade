@@ -106,6 +106,38 @@ sb.append("_9H _JH _QS _2C                 \n");
                     }
                 }
                 // \. move cards from column to column
+                // move card from freecell to foundation
+                List<Card> cards2 = playingBoard.getFreecellCardPossibleToMoveToFoundation();
+                for(Card cc : cards2){
+                    GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move card from freecell to foundation", playingBoard, i+1);
+                    List<Foundation> fdtns = newBoard.getAllFoundations();
+                    B:
+                    for(Foundation fdtn : fdtns){
+                        if(!fdtn.cardType().equals(cc.type())){
+                            continue B;
+                        }
+                        fdtn.addCardFromFreecell(cc, newBoard.getAllFreeCells());
+                        break B;
+                    }
+                    newBoard.printBoardState();
+                    if(!memory.contains(newBoard.getBoardState())){
+                        memory.add(newBoard.getBoardState());
+                        toPlaysNext.add(newBoard);
+                    }
+                }
+                // \. move card from freecell to foundation
+                // move card from freecell to column
+                cards = playingBoard.getFreecellCardPossibleToMoveToColumn();
+                for(ColumnAndCard cc : cards){
+                    GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move card from freecell to column", playingBoard, i+1);
+                    newBoard.moveCardFromFreecell(cc);
+                    newBoard.printBoardState();
+                    if(!memory.contains(newBoard.getBoardState())){
+                        memory.add(newBoard.getBoardState());
+                        toPlaysNext.add(newBoard);
+                    }
+                }
+                // \. move card from freecell to column
             }// \. for(GameBoard playingBoard : toPlays){
             
             toPlays.clear();
