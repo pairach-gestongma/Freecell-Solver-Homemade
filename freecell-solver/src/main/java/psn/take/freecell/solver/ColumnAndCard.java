@@ -5,6 +5,8 @@
  */
 package psn.take.freecell.solver;
 
+import java.util.List;
+
 /**
  *
  * @author PairachG
@@ -13,6 +15,7 @@ public class ColumnAndCard {
     
     private ColumnCard column;
     private Card card;
+    private List<Card> cards;
     private ColumnCard moveToCol;
     private Card moveToCard;
 
@@ -27,7 +30,18 @@ public class ColumnAndCard {
         this.moveToCol = moveToCol;
         this.moveToCard = moveToCard;
     }
+    
+    public ColumnAndCard(ColumnCard column, List<Card> cards, ColumnCard moveToCol, Card moveToCard) {
+        this.column = column;
+        this.cards = cards;
+        this.moveToCol = moveToCol;
+        this.moveToCard = moveToCard;
+    }
 
+    public List<Card> getCards() {
+        return cards;
+    }
+    
     public ColumnCard getColumn() {
         return column;
     }

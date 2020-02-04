@@ -20,7 +20,7 @@ public class Main {
     
     
     
-    public static void main1(String[] args) {
+    public static void main(String[] args) {
         /**
          * initial Game #142744 free-cell by Mobility ware
          */
@@ -65,6 +65,7 @@ sb.append("_9H _JH _QS _2C                 \n");
                     }
                     newBoard.printBoardState();
                     if(!memory.contains(newBoard.getBoardState())){
+                        memory.add(newBoard.getBoardState());
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -76,6 +77,7 @@ sb.append("_9H _JH _QS _2C                 \n");
                     newBoard.addCardToFreeCell(cc.getCard(), cc.getColumn().getColumn());
                     newBoard.printBoardState();
                     if(!memory.contains(newBoard.getBoardState())){
+                        memory.add(newBoard.getBoardState());
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -87,12 +89,22 @@ sb.append("_9H _JH _QS _2C                 \n");
                     newBoard.moveCard(cc);
                     newBoard.printBoardState();
                     if(!memory.contains(newBoard.getBoardState())){
+                        memory.add(newBoard.getBoardState());
                         toPlaysNext.add(newBoard);
                     }
                 }
                 // \. move card from column to column
                 // move cards from column to column
-                
+                cards = playingBoard.getPairCardPossibleToMoveToColumn();
+                for(ColumnAndCard cc : cards){
+                    GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move cards from col to col", playingBoard, i+1);
+                    newBoard.moveCards(cc);
+                    newBoard.printBoardState();
+                    if(!memory.contains(newBoard.getBoardState())){
+                        memory.add(newBoard.getBoardState());
+                        toPlaysNext.add(newBoard);
+                    }
+                }
                 // \. move cards from column to column
             }// \. for(GameBoard playingBoard : toPlays){
             
@@ -103,18 +115,25 @@ sb.append("_9H _JH _QS _2C                 \n");
         
     }
     
-    public static void main(String[] args) {
+    public static void mainTestGetPairs(String[] args) {
         StringBuilder sb = new StringBuilder();
-sb.append(" _2C                              \n");
-sb.append(" _QC _AD _5S _9S _KH _KS _6D _2S  \n");
-sb.append(" _3H _4S _5H _4D _2D _3D _TD _7H  \n");
-sb.append(" _AH _6C _4H _TH _7D _AC _9D _9C  \n");
-sb.append(" _5D _7C _5C _6S _3S _QH _4C _JS  \n");
-sb.append(" _8C _TS _7S _8D _TC _8S _8H _KC  \n");
-sb.append(" _6H _JD _2H _KD _JC _AS _QD _3C  \n");
-sb.append(" _9H     _QS                      \n");
-sb.append("         _JH                      \n");
+sb.append("_2C                              \n");
+sb.append("_QC _AD _5S _9S _KH _KS _6D _2S  \n");
+sb.append("_3H _4S _5H _4D _2D _3D _TD _7H  \n");
+sb.append("_AH _6C _4H _TH _7D _AC _9D _9C  \n");
+sb.append("_5D _7C _5C _6S _3S _QH _4C _JS  \n");
+sb.append("_8C _TS _7S _8D _TC _8S _8H _KC  \n");
+sb.append("_6H _JD _2H _KD _JC _AS _QD _3C  \n");
+sb.append("_9H     _QS                      \n");
+sb.append("        _JH                      \n");
         GameBoard gb = new GameBoard(0, sb.toString(), "0", null, 0);
-        
+        gb.intialPrevNextAllCards();
+        List<ColumnAndCard> pairColumns = gb.getPairColumns();
+        System.out.println("pairColumns.size():" + pairColumns.size());
+        for(ColumnAndCard cac : pairColumns){
+            for(Card c : cac.getCards()){
+                System.out.println("c:" + c.name());
+            }
+        }
     }
 }

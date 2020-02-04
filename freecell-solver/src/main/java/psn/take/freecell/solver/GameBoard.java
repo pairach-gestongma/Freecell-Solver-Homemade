@@ -6,6 +6,7 @@
 package psn.take.freecell.solver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -155,6 +156,15 @@ public class GameBoard {
         toCol.getCards().add(colAndCard.getCard());
         ColumnCard srcCol = getColumn(colAndCard.getColumn().getColumn());
         srcCol.getCards().remove(colAndCard.getCard());
+    }
+    
+    public void moveCards(ColumnAndCard colAndCard){
+        ColumnCard toCol = getColumn(colAndCard.getMoveToCol().getColumn());
+        ColumnCard srcCol = getColumn(colAndCard.getColumn().getColumn());
+        for(Card c : colAndCard.getCards()){
+            toCol.getCards().add(c);
+            srcCol.getCards().remove(c);
+        }
     }
     
     public void intialPrevNextAllCards(){
@@ -458,7 +468,70 @@ public class GameBoard {
         return null;
     }
     
+    public List<ColumnAndCard> getPairColumns(){
+        List<ColumnAndCard> res = new ArrayList();
+        List<ColumnAndCard> lastCardFromEachColumns = getLastCardFromEachColumns();
+        for(ColumnAndCard lastCard : lastCardFromEachColumns){
+            List<Card> pairs = new ArrayList();
+            Card last = null;
+            B:
+            for(int i=lastCard.getColumn().getCards().size();i>0;i--){
+                Card c = lastCard.getColumn().getCards().get(i -1);
+                if(i==lastCard.getColumn().getCards().size()){
+                    last = c;
+                    pairs.add(last);
+                    continue B;
+                }
+//                System.out.println("last:" + last.name());
+//                System.out.println("up:" + c.name());
+//                for(Card prevCard : last.getPossibleCardsPrevInColumn()){
+//                    System.out.println("prevCard:" + prevCard.name());
+//                }
+                if(last.getPossibleCardsPrevInColumn().contains(c)){
+                    pairs.add(c);
+                }else{
+                    break B;
+                }
+            }
+            if(pairs.size() >= 2){
+                Collections.reverse(pairs);
+                ColumnAndCard ccRes = new ColumnAndCard(lastCard.getColumn(),
+                        pairs, null, null);
+                res.add(ccRes);
+            }
+        }
+        return res;
+    }
     
+    public List<ColumnAndCard> getPairCardPossibleToMoveToColumn(){
+        List<ColumnAndCard> res = new ArrayList();
+        List<ColumnAndCard> pairColumns = getPairColumns();
+        for(ColumnAndCard pairColumn : pairColumns){
+            List<ColumnAndCard> lastCardFromEachColumns = getLastCardFromEachColumns();
+            for(ColumnAndCard lastCard : lastCardFromEachColumns){
+                if(pairColumn.getColumn().getColumn().equals(
+                    lastCard.getColumn().getColumn())){
+                    continue;
+                }
+                B:
+                for(Card c : pairColumn.getCards()){
+                    if(pairColumn.getCards().indexOf(c)+1 == pairColumn.getCards().size()){
+                        break B;
+                    }
+                    if(lastCard.getCard().getPossibleCardsNextInColumn().contains(c)){
+                        List<Card> pairCardsToMove = new ArrayList();
+                        for(int i=pairColumn.getCards().indexOf(c);i<pairColumn.getCards().size();i++){
+                            pairCardsToMove.add(pairColumn.getCards().get(i));
+                        }
+                        ColumnAndCard re = new ColumnAndCard(pairColumn.getColumn(), 
+                                pairCardsToMove, lastCard.getColumn(), lastCard.getCard());
+                        res.add(re);
+                    }
+                }
+            }
+        }
+        return res;
+    }
     
 //    public List<GameBoard> nextPlay(){
 //        List<GameBoard> res = new ArrayList();
