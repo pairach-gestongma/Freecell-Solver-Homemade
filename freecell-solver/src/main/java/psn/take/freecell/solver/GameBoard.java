@@ -131,6 +131,10 @@ public class GameBoard {
             }// \. for(String line : lines){
         }
     }
+
+    public int getBoardId() {
+        return boardId;
+    }
     
     public GameBoard getParent() {
         return parent;
@@ -349,12 +353,44 @@ public class GameBoard {
         return sb.toString();
     }
     
+    public int totalCardsInFdtn(){
+        int res = 0;
+        for(Foundation fdtn : allFoundations){
+            res += fdtn.total();
+        }
+        return res;
+    }
+    
+    public int boardPoint(){
+        int emptyColCount = 0;
+        for(ColumnCard col : allColumns){
+            if(col.getCards().isEmpty()){
+                emptyColCount++;
+            }
+        }
+        int aDepth = 0;
+        for(ColumnCard col : allColumns){
+            List<Card> cards = col.getCards();
+            for(Card c : cards){
+                if(c.val() == 1){
+                    aDepth += (cards.size() - (cards.indexOf(c) + 1));
+                }
+            }
+        }
+        
+        return /*((4 - allFreeCells.size())*2*emptyColCount) +*/ totalCardsInFdtn() /*- aDepth*/;
+    }
+    
     public void printBoardState() {
+        int cardInFdtnCount = 0;
+        for(Foundation fdtn : allFoundations){
+            cardInFdtnCount += fdtn.total();
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(lineSp);
         sb.append("\n");
         sb.append("showBoard : "+boardId+"(" + name
-                + ","+((parent!=null)?parent.boardId:"")+"), depth:" + depth);
+                + ","+((parent!=null)?parent.boardId:"")+"), depth:" + depth + ", fdtn:" + cardInFdtnCount);
         sb.append("\n");
         sb.append(lineSp).append("\n");
         for(int i=0;i<4;i++){
@@ -377,6 +413,26 @@ public class GameBoard {
         sb.append(lineSp.replaceAll("-", ".")).append("\n");
         sb.append(getBoardState());
         logger.debug(sb.toString());
+        if(column1.getCards().isEmpty() &&
+                column2.getCards().isEmpty() &&
+                column3.getCards().isEmpty() &&
+                column4.getCards().isEmpty() &&
+                column5.getCards().isEmpty() &&
+                column6.getCards().isEmpty() &&
+                column7.getCards().isEmpty() &&
+                column8.getCards().isEmpty()){
+            throw new RuntimeException("--END--");
+        }
+    }
+    
+    public int maxSubMinInFoundation(){
+        int min = 0;
+        int max = 0;
+        for(Foundation fdtn : allFoundations){
+            try{min = Math.min(fdtn.currentCard().val(), min);}catch(NoSuchElementException ex){}
+            try{max = Math.max(fdtn.currentCard().val(), max);}catch(NoSuchElementException ex){}
+        }
+        return max - min;
     }
     
     private List<ColumnAndCard> getLastCardFromEachColumns(){
@@ -471,6 +527,18 @@ public class GameBoard {
                 }
             }
         }
+        
+        for(ColumnCard col : allColumns){
+            if(!col.getCards().isEmpty()){
+                continue;
+            }
+            for(ColumnAndCard colCard2 : lastCardFromEachColumns){
+                ColumnAndCard re = new ColumnAndCard(colCard2.getColumn(), colCard2.getCard()
+                        , col, null);
+                res.add(re);
+            }
+        }
+        
         return res;
     }
     
@@ -519,6 +587,16 @@ public class GameBoard {
     }
     
     public List<ColumnAndCard> getPairCardPossibleToMoveToColumn(){
+        int amountFreecell = 4 - allFreeCells.size();
+        int amountEmptyCol = 0;
+        for(ColumnCard col : allColumns){
+            if(col.getCards().isEmpty()){
+                amountEmptyCol++;
+            }
+        }
+        int maxCardsToMoveToNonEmptyCol = (amountFreecell+1)*(1+amountEmptyCol);
+        int maxCardsToMoveToEmptyCol = (amountFreecell+1)*(amountEmptyCol);
+        
         List<ColumnAndCard> res = new ArrayList();
         List<ColumnAndCard> pairColumns = getPairColumns();
         for(ColumnAndCard pairColumn : pairColumns){
@@ -538,13 +616,39 @@ public class GameBoard {
                         for(int i=pairColumn.getCards().indexOf(c);i<pairColumn.getCards().size();i++){
                             pairCardsToMove.add(pairColumn.getCards().get(i));
                         }
+                        if(pairCardsToMove.size() <= maxCardsToMoveToNonEmptyCol){
+                            ColumnAndCard re = new ColumnAndCard(pairColumn.getColumn(), 
+                                    pairCardsToMove, lastCard.getColumn(), lastCard.getCard());
+                            res.add(re);
+                        }
+                    }
+                }// \. for(Card c : pairColumn.getCards()){
+            }// \. for(ColumnAndCard lastCard : lastCardFromEachColumns){
+        }
+        
+        for(ColumnAndCard pairColumn : pairColumns){
+            for(ColumnCard col : allColumns){
+                if(!col.getCards().isEmpty()){
+                    continue;
+                }
+                B:
+                for(Card c : pairColumn.getCards()){
+                    if(pairColumn.getCards().indexOf(c)+1 == pairColumn.getCards().size()){
+                        break B;
+                    }
+                    List<Card> pairCardsToMove = new ArrayList();
+                    for(int i=pairColumn.getCards().indexOf(c);i<pairColumn.getCards().size();i++){
+                        pairCardsToMove.add(pairColumn.getCards().get(i));
+                    }
+                    if(pairCardsToMove.size() <= maxCardsToMoveToEmptyCol){
                         ColumnAndCard re = new ColumnAndCard(pairColumn.getColumn(), 
-                                pairCardsToMove, lastCard.getColumn(), lastCard.getCard());
+                                pairCardsToMove, col, null);
                         res.add(re);
                     }
-                }
-            }
+                }// \. for(Card c : pairColumn.getCards()){
+            }// \. for(ColumnCard col : allColumns){
         }
+        
         return res;
     }
     

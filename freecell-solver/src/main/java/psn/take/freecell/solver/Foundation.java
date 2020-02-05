@@ -45,6 +45,10 @@ public class Foundation {
 //        }
     }
     
+    public int total(){
+        return cards.size();
+    }
+    
     public void initWithCard(Card card){
         cards.clear();
         for(int i=0;i<card.val();i++){
@@ -69,6 +73,9 @@ public class Foundation {
     }
     
     public Card nextNeedCard(){
+        if(expectCards.size() == cards.size()){
+            return null;
+        }
         return expectCards.get(cards.size());
     }
     

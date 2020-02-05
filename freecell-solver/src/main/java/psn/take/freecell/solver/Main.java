@@ -50,9 +50,12 @@ sb.append("_9H _JH _QS _2C                 \n");
         List<GameBoard> toPlays = new ArrayList();
         toPlays.add(board);
         memory.add(board.getBoardState());
-        for(int i=0;i<100;i++){
+        int maxDepth = 200;
+        A:
+        for(int i=0;i<maxDepth;i++){
             
             List<GameBoard> toPlaysNext = new ArrayList();
+            A1:
             for(GameBoard playingBoard : toPlays){
                         
                 // foundation
@@ -67,7 +70,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                         }
                     }
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardState())){
+                    if(!memory.contains(newBoard.getBoardState())
+                            && newBoard.maxSubMinInFoundation() <= 2){
                         memory.add(newBoard.getBoardState());
                         toPlaysNext.add(newBoard);
                     }
@@ -141,11 +145,34 @@ sb.append("_9H _JH _QS _2C                 \n");
                     }
                 }
                 // \. move card from freecell to column
+                
             }// \. for(GameBoard playingBoard : toPlays){
             
+            // choose some board to play next
+            int point = -1000000;
+            List<GameBoard> winner = new ArrayList();
+            for(GameBoard tp : toPlaysNext){
+                logger.debug("checkBoardPoint:"+tp.getBoardId()+"=" + tp.boardPoint());
+                if(tp.boardPoint() > point){
+                    point = tp.boardPoint();
+                    winner.clear();
+                    winner.add(tp);
+                    //logger.debug("this is candidate");
+                }else if(tp.boardPoint() == point){
+                    winner.add(tp);
+                }
+            }
+            StringBuilder sb1 = new StringBuilder();
+            sb1.append("winner for depth:" + (i+1)).append(" amnt:").append(winner.size()).append("\n");
+            for(GameBoard wn : winner){
+                sb1.append("boardId:" + wn.getBoardId() + "\n");
+            }
+            logger.debug(sb1.toString());
+            // \. choose some board to play next
+            
             toPlays.clear();
-            toPlays.addAll(toPlaysNext);
-        }
+            toPlays.addAll(winner);
+        }// for(int i=0;i<maxDepth;i++)
         
         
     }
