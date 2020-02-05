@@ -416,7 +416,11 @@ public class GameBoard {
             }
         }
         
-        return ((4 - allFreeCells.size())*2*emptyColCount) + totalCardsInFdtn() /*- aDepth*/;
+        if(((4 - allFreeCells.size()) + (4 - allFreeCells.size())*(emptyColCount)) == 0){
+            return 0;
+        }
+        
+        return (4 - allFreeCells.size()) + (4 - allFreeCells.size())*(emptyColCount) + totalCardsInFdtn() - aDepth;
     }
     
     public void printBoardState() {
@@ -736,12 +740,12 @@ public class GameBoard {
             throw new RuntimeException("code wrong");
         }
         GameBoard oo = (GameBoard)o;
-        if(oo.depth > depth && oo.depth - depth > 5){
-            return false;
-        }
-        if(depth > oo.depth && depth - oo.depth > 5){
-            return false;
-        }
+//        if(oo.depth > depth && oo.depth - depth > 5){
+//            return false;
+//        }
+//        if(depth > oo.depth && depth - oo.depth > 5){
+//            return false;
+//        }
         if(allFreeCells.size() != oo.getAllFreeCells().size()){
             return false;
         }

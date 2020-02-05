@@ -50,7 +50,7 @@ sb.append("_9H _JH _QS _2C                 \n");
         List<GameBoard> toPlays = new ArrayList();
         toPlays.add(board);
         memory.add(board);
-        int maxDepth = 200;
+        int maxDepth = 2000;
         int allowFoundationDiff = 3;
         A:
         for(int i=0;i<maxDepth;i++){
