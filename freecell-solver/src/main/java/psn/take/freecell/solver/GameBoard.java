@@ -7,8 +7,10 @@ package psn.take.freecell.solver;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -414,7 +416,7 @@ public class GameBoard {
             }
         }
         
-        return /*((4 - allFreeCells.size())*2*emptyColCount) +*/ totalCardsInFdtn() /*- aDepth*/;
+        return ((4 - allFreeCells.size())*2*emptyColCount) + totalCardsInFdtn() /*- aDepth*/;
     }
     
     public void printBoardState() {
@@ -608,6 +610,7 @@ public class GameBoard {
 //                }
                 if(last.getPossibleCardsPrevInColumn().contains(c)){
                     pairs.add(c);
+                    last = c;
                 }else{
                     break B;
                 }
@@ -727,6 +730,94 @@ public class GameBoard {
         return allFreeCells;
     }
     
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof GameBoard)){
+            throw new RuntimeException("code wrong");
+        }
+        GameBoard oo = (GameBoard)o;
+        if(oo.depth > depth && oo.depth - depth > 5){
+            return false;
+        }
+        if(depth > oo.depth && depth - oo.depth > 5){
+            return false;
+        }
+        if(allFreeCells.size() != oo.getAllFreeCells().size()){
+            return false;
+        }
+        for(Card c : allFreeCells){
+            if(!oo.getAllFreeCells().contains(c)){
+                return false;
+            }
+        }
+        int emptyColCount1 = 0;
+        for(ColumnCard cc : allColumns){
+            if(cc.getCards().isEmpty()){
+                emptyColCount1++;
+            }
+        }
+        int emptyColCount2 = 0;
+        for(ColumnCard cc : oo.allColumns){
+            if(cc.getCards().isEmpty()){
+                emptyColCount2++;
+            }
+        }
+        if(emptyColCount1 != emptyColCount2){
+            return false;
+        }
+        
+        int maxCardByEachColumns1 = 0;
+        for(ColumnCard col : allColumns){
+            maxCardByEachColumns1 = Math.max(maxCardByEachColumns1, col.getCards().size());
+        }
+        int maxCardByEachColumns2 = 0;
+        for(ColumnCard col : oo.allColumns){
+            maxCardByEachColumns2 = Math.max(maxCardByEachColumns2, col.getCards().size());
+        }
+        if(maxCardByEachColumns1 != maxCardByEachColumns2){
+            return false;
+        }
+        
+        List<Set<Card>> rows1 = new ArrayList();
+        List<Set<Card>> rows2 = new ArrayList();
+        for(int i=0;i<maxCardByEachColumns1;i++){
+            Set<Card> row = new HashSet();
+            for(ColumnCard cc : allColumns){
+                try{row.add(cc.getCards().get(i));}catch(Exception ex){}
+            }
+            rows1.add(row);
+        }
+        for(int i=0;i<maxCardByEachColumns1;i++){
+            Set<Card> row = new HashSet();
+            for(ColumnCard cc : oo.allColumns){
+                try{row.add(cc.getCards().get(i));}catch(Exception ex){}
+            }
+            rows2.add(row);
+        }
+        for(Set<Card> row1 : rows1){
+            boolean foundSameColumn = false;
+            B:
+            for(Set<Card> row2 : rows2){
+                if(row1.size() != row2.size()){
+                    continue B;
+                }
+                if(row1.containsAll(row2)){
+                    foundSameColumn = true;
+                    break B;
+                }
+            }
+            if(! foundSameColumn){
+                return false;
+            }
+        }
+        
+        logger.debug("eq:");
+        printBoardState();
+        oo.printBoardState();
+        
+        return true;
+    }
+    
 //    public List<GameBoard> nextPlay(){
 //        List<GameBoard> res = new ArrayList();
 //        GameBoard gb = new GameBoard(getBoardState().toString());
@@ -746,6 +837,8 @@ public class GameBoard {
 //        // \. posible to foundation
 //        return res;
 //    }
+
+    
 
     
 }

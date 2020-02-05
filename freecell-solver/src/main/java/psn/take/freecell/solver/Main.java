@@ -46,10 +46,10 @@ sb.append("_9H _JH _QS _2C                 \n");
         board.printBoardState();
         //System.out.println(board.getBoardStateFreecellAndFoundation());
         
-        List<String> memory = new ArrayList();
+        List<GameBoard> memory = new ArrayList();
         List<GameBoard> toPlays = new ArrayList();
         toPlays.add(board);
-        memory.add(board.getBoardState());
+        memory.add(board);
         int maxDepth = 200;
         int allowFoundationDiff = 3;
         A:
@@ -72,8 +72,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     }
                     if(newBoard.maxSubMinInFoundation() <= allowFoundationDiff){
                         newBoard.printBoardState();
-                        if(!memory.contains(newBoard.getBoardStateAndFoundation())){
-                            memory.add(newBoard.getBoardStateAndFoundation());
+                        if(!memory.contains(newBoard)){
+                            memory.add(newBoard);
                             toPlaysNext.add(newBoard);
                         }
                     }
@@ -85,8 +85,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move to freecell", playingBoard, i+1);
                     newBoard.addCardToFreeCell(cc.getCard(), cc.getColumn().getColumn());
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
-                        memory.add(newBoard.getBoardStateAndFoundation());
+                    if(!memory.contains(newBoard)){
+                        memory.add(newBoard);
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -97,8 +97,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move card from col to col", playingBoard, i+1);
                     newBoard.moveCard(cc);
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
-                        memory.add(newBoard.getBoardStateAndFoundation());
+                    if(!memory.contains(newBoard)){
+                        memory.add(newBoard);
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -109,8 +109,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move cards from col to col", playingBoard, i+1);
                     newBoard.moveCards(cc);
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
-                        memory.add(newBoard.getBoardStateAndFoundation());
+                    if(!memory.contains(newBoard)){
+                        memory.add(newBoard);
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -130,8 +130,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     }
                     if(newBoard.maxSubMinInFoundation() <= allowFoundationDiff){
                         newBoard.printBoardState();
-                        if(!memory.contains(newBoard.getBoardStateAndFoundation())){
-                            memory.add(newBoard.getBoardStateAndFoundation());
+                        if(!memory.contains(newBoard)){
+                            memory.add(newBoard);
                             toPlaysNext.add(newBoard);
                         }
                     }
@@ -143,8 +143,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move card from freecell to column", playingBoard, i+1);
                     newBoard.moveCardFromFreecell(cc);
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
-                        memory.add(newBoard.getBoardStateAndFoundation());
+                    if(!memory.contains(newBoard)){
+                        memory.add(newBoard);
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -181,7 +181,7 @@ sb.append("_9H _JH _QS _2C                 \n");
         
     }
     
-    public static void mainTestGetPairs(String[] args) {
+    public static void main1(String[] args) {
         StringBuilder sb = new StringBuilder();
 sb.append("_2C                              \n");
 sb.append("_QC _AD _5S _9S _KH _KS _6D _2S  \n");
@@ -194,9 +194,54 @@ sb.append("_9H     _QS                      \n");
 sb.append("        _JH                      \n");
         GameBoard gb = new GameBoard(0, sb.toString(), "0", null, 0);
         gb.intialPrevNextAllCards();
+//        List<ColumnAndCard> pairColumns = gb.getPairColumns();
+//        System.out.println("pairColumns.size():" + pairColumns.size());
+//        for(ColumnAndCard cac : pairColumns){
+//            for(Card c : cac.getCards()){
+//                System.out.println("c:" + c.name());
+//            }
+//        }
+        List<Card> possibleCardsNextInColumn = Card._JD.getPossibleCardsNextInColumn();
+        for(Card c : possibleCardsNextInColumn){
+            System.out.println(c);
+        }
+        System.out.println("------");
+        possibleCardsNextInColumn = Card._JD.getPossibleCardsPrevInColumn();
+        for(Card c : possibleCardsNextInColumn){
+            System.out.println(c);
+        }
+    }
+    
+    public static void main2(String[] args) {
+        StringBuilder sb = new StringBuilder();
+//sb.append("_3D _KS         _3C         _AS  \n");
+//sb.append("_QC _AD _5S _9S _KH     _6D _2S  \n");
+//sb.append("_3H _4S _5H _4D _2D     _TD _7H  \n");
+//sb.append("_AH _6C _4H _TH _7D     _9D _9C  \n");
+//sb.append("_5D _7C _5C _6S _3S     _4C _JS  \n");
+//sb.append("_8C _TS _7S _8D         _8H _KC  \n");
+//sb.append("_6H _JD _2H _KD         _QD _QH  \n");
+//sb.append("_9H _JH _QS             _JC      \n");
+//sb.append("_8S _TC                          \n");
+sb.append("_3D _KS _TS _5D _3C     _AH _AS  \n");
+sb.append("_QC _AD _5S _9S _KH _8C _6D _2S  \n");
+sb.append("_3H _4S _5H _4D _2D     _TD _7H  \n");
+sb.append("    _6C _4H _TH _7D     _9D _9C  \n");
+sb.append("    _7C _5C _6S _3S     _4C _JS  \n");
+sb.append("    _6H _7S _8D         _8H _KC  \n");
+sb.append("        _2H _KD         _QD _QH  \n");
+sb.append("        _QS             _JC      \n");
+sb.append("        _JD                      \n");
+sb.append("        _JH                      \n");
+sb.append("        _TC                      \n");
+sb.append("        _9H                      \n");
+sb.append("        _8S                      \n");
+        GameBoard gb = new GameBoard(0, sb.toString(), "0", null, 0);
+        gb.intialPrevNextAllCards();
         List<ColumnAndCard> pairColumns = gb.getPairColumns();
         System.out.println("pairColumns.size():" + pairColumns.size());
         for(ColumnAndCard cac : pairColumns){
+            System.out.println("-------------");
             for(Card c : cac.getCards()){
                 System.out.println("c:" + c.name());
             }
