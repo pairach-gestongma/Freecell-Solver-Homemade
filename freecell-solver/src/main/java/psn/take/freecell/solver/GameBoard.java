@@ -313,6 +313,42 @@ public class GameBoard {
         return sb.toString();
     }
     
+    public String getBoardStateAndFoundation(){
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<4;i++){
+            sb.append("   " + " ");
+        }
+        for(int i=0;i<4;i++){
+            try{
+                sb.append(allFoundations.get(i).currentCard() + " ");
+            }catch(IndexOutOfBoundsException ex){
+                sb.append("   " + " ");
+            }catch(NoSuchElementException ex){
+                sb.append("   " + " ");
+            }
+        }
+        sb.append("\n");
+        
+        int maxCardByEachColumns = 0;
+        for(ColumnCard col : allColumns){
+            maxCardByEachColumns = Math.max(maxCardByEachColumns, col.getCards().size());
+        }
+        
+        for(int i=0;i<maxCardByEachColumns;i++){
+            for(ColumnCard col : allColumns){
+                try{
+                    sb.append(col.getCards().get(i));
+                    sb.append(" ");
+                }catch(IndexOutOfBoundsException ex){
+                    sb.append("   ");
+                    sb.append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+    
     public String getBoardStateFreecellAndFoundation(){
         StringBuilder sb = new StringBuilder();
         for(int i=0;i<4;i++){
@@ -390,7 +426,7 @@ public class GameBoard {
         sb.append(lineSp);
         sb.append("\n");
         sb.append("showBoard : "+boardId+"(" + name
-                + ","+((parent!=null)?parent.boardId:"")+"), depth:" + depth + ", fdtn:" + cardInFdtnCount);
+                + ","+((parent!=null)?parent.boardId:"")+"), depth:" + depth + ", fdtn:" + cardInFdtnCount +", max-min:" + maxSubMinInFoundation());
         sb.append("\n");
         sb.append(lineSp).append("\n");
         for(int i=0;i<4;i++){

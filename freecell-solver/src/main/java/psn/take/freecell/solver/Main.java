@@ -51,6 +51,7 @@ sb.append("_9H _JH _QS _2C                 \n");
         toPlays.add(board);
         memory.add(board.getBoardState());
         int maxDepth = 200;
+        int allowFoundationDiff = 3;
         A:
         for(int i=0;i<maxDepth;i++){
             
@@ -69,11 +70,12 @@ sb.append("_9H _JH _QS _2C                 \n");
                             break B;
                         }
                     }
-                    newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardState())
-                            && newBoard.maxSubMinInFoundation() <= 2){
-                        memory.add(newBoard.getBoardState());
-                        toPlaysNext.add(newBoard);
+                    if(newBoard.maxSubMinInFoundation() <= allowFoundationDiff){
+                        newBoard.printBoardState();
+                        if(!memory.contains(newBoard.getBoardStateAndFoundation())){
+                            memory.add(newBoard.getBoardStateAndFoundation());
+                            toPlaysNext.add(newBoard);
+                        }
                     }
                 }
                 // \. foundation
@@ -83,8 +85,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move to freecell", playingBoard, i+1);
                     newBoard.addCardToFreeCell(cc.getCard(), cc.getColumn().getColumn());
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardState())){
-                        memory.add(newBoard.getBoardState());
+                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
+                        memory.add(newBoard.getBoardStateAndFoundation());
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -95,8 +97,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move card from col to col", playingBoard, i+1);
                     newBoard.moveCard(cc);
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardState())){
-                        memory.add(newBoard.getBoardState());
+                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
+                        memory.add(newBoard.getBoardStateAndFoundation());
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -107,8 +109,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move cards from col to col", playingBoard, i+1);
                     newBoard.moveCards(cc);
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardState())){
-                        memory.add(newBoard.getBoardState());
+                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
+                        memory.add(newBoard.getBoardStateAndFoundation());
                         toPlaysNext.add(newBoard);
                     }
                 }
@@ -126,10 +128,12 @@ sb.append("_9H _JH _QS _2C                 \n");
                         fdtn.addCardFromFreecell(cc, newBoard.getAllFreeCells());
                         break B;
                     }
-                    newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardState())){
-                        memory.add(newBoard.getBoardState());
-                        toPlaysNext.add(newBoard);
+                    if(newBoard.maxSubMinInFoundation() <= allowFoundationDiff){
+                        newBoard.printBoardState();
+                        if(!memory.contains(newBoard.getBoardStateAndFoundation())){
+                            memory.add(newBoard.getBoardStateAndFoundation());
+                            toPlaysNext.add(newBoard);
+                        }
                     }
                 }
                 // \. move card from freecell to foundation
@@ -139,8 +143,8 @@ sb.append("_9H _JH _QS _2C                 \n");
                     GameBoard newBoard = new GameBoard(boardId++, playingBoard.getBoardStateFreecellAndFoundation(), "move card from freecell to column", playingBoard, i+1);
                     newBoard.moveCardFromFreecell(cc);
                     newBoard.printBoardState();
-                    if(!memory.contains(newBoard.getBoardState())){
-                        memory.add(newBoard.getBoardState());
+                    if(!memory.contains(newBoard.getBoardStateAndFoundation())){
+                        memory.add(newBoard.getBoardStateAndFoundation());
                         toPlaysNext.add(newBoard);
                     }
                 }
